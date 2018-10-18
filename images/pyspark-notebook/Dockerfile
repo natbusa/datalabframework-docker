@@ -10,11 +10,14 @@ RUN set -eux; \
     apt-get clean; rm -rf /var/lib/apt/lists/*; \
     usermod -aG sudo ${NB_USER}; echo "${NB_USER}:juno" | chpasswd
 
-ENV SPARK_VERSION=2.3.2  \
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/ \
+    SPARK_VERSION=2.3.2  \
     HADOOP_VERSION=2.8.5 \
     SPARK_HOME=/usr/local/spark   \
     HADOOP_HOME=/usr/local/hadoop \
-    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+    HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native \
+    HADOOP_OPTS="-Djava.library.path=$HADOOP_COMMON_LIB_NATIVE_DIR"
+
 
 # Some Apache mirror sites:
 #   * https://apache.org/dist
@@ -52,7 +55,7 @@ RUN set -eux; \
     wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-kms/1.11.234/aws-java-sdk-kms-1.11.234.jar; \
     wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-s3/1.11.234/aws-java-sdk-s3-1.11.234.jar
 
-ENV SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info" \
+ENV SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=error" \
     PYTHONPATH="${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-0.10.7-src.zip" \
     PATH="${SPARK_HOME}/bin:${HADOOP_HOME}/bin:${PATH}"
 

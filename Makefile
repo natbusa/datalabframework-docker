@@ -12,14 +12,16 @@ login:
 
 datalabframework:	images/datalabframework/Dockerfile
 	$(eval IMAGENAME = $@)
-	docker build -t $(USERNAME)/$(IMAGENAME):$(DLF_VERSION) \
+	docker build -t $(USERNAME)/$(IMAGENAME):latest \
 	       --build-arg USERNAME=$(USERNAME) \
 				 --build-arg DLF_VERSION=$(DLF_VERSION) -f $^ $(shell dirname $^)
+	docker tag $(USERNAME)/$(IMAGENAME):latest $(USERNAME)/$(IMAGENAME):$(DLF_VERSION)
 	docker push $(USERNAME)/$(IMAGENAME):$(DLF_VERSION)
 
 pyspark-notebook:	images/pyspark-notebook/Dockerfile
 	$(eval IMAGENAME = $@)
-	docker build -t $(USERNAME)/$(IMAGENAME):$(NOTEBOOK_VERSION) -f $^ $(shell dirname $^)
+	docker build -t $(USERNAME)/$(IMAGENAME):latest -f $^ $(shell dirname $^)
+	docker tag $(USERNAME)/$(IMAGENAME):latest $(USERNAME)/$(IMAGENAME):$(NOTEBOOK_VERSION)
 	docker push $(USERNAME)/$(IMAGENAME):$(NOTEBOOK_VERSION)
 
 .PHONY: all pyspark-notebook datalabframework login
